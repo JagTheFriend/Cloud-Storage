@@ -1,11 +1,13 @@
-from . import log
+from re import findall
+
+from . import db, log
 from flask.helpers import flash, url_for
 from flask import Blueprint, render_template, request
-from flask_login import login_user, current_user
+from flask_login import login_user, login_required, current_user, logout_user
 
 from website.models import User
 from werkzeug.utils import redirect
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 EMAIL_REGEX = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
 auth = Blueprint("auth", __name__)
@@ -34,3 +36,66 @@ def login():
 
     log.debug("Received GET request on `/login`")
     return render_template("login.html", user=current_user)
+
+
+@auth.route("/sign-up", methods=["GET", "POST"])
+def sign_up():
+    if request.method == "POST":
+        log.debug("Received a 'POST' request on `/sign-up`")
+        email = request.form.get("email")
+        username = request.form.get("username")
+        password = request.form.get("password1")
+        password1 = request.form.get("password2")
+        log.debug(f"Email: {email!r}, Password: {password!r}, Repeat password: {password1!r}")
+        # check whether the email has a valid form
+        if not findall(EMAIL_REGEX, email):
+            flash("Invalid Email!", category="error")
+
+        # check whether email exists
+        elif User.query.filter_by(email=email).first():
+            flash("Email is already in use.", category="error")
+
+        # check whether usename exists
+        elif User.query.filter_by(username=username).first():
+            flash("Username is already in use.", category="error")
+
+        # the passwords don't match
+        elif password1 != password:
+            flash("Passwords don't match", category="error")
+
+        # check whether the username is too short
+        elif len(username) < 1:
+            flash("Username is too short", category="error")
+
+        # check whether the password is too short
+        elif len(password) < 6:
+            flash("Password is too short", category="error")
+
+        else:
+            new_user = User(
+                email=email,
+                username=username,
+                password=generate_password_hash(password)
+            )
+            db.session.add(new_user)
+            db.session.commit()
+
+            log.debug("Created new user")
+            login_user(new_user, remember=True)
+            flash("User Created!")
+            # redirect the user to the home page
+            return redirect(url_for("views.home"))
+
+    # TODO: Add a way to verify the email
+    log.debug("Received GET request on `/signup`")
+    return render_template("signup.html", user=current_user)
+
+
+@auth.route("/logout")
+@login_required  # You can only access this page if you have logged in
+def logout():
+    """Redirects the user to the home page
+    when the user clicks on the logout button
+    """
+    logout_user()
+    return redirect(url_for("views.home"))

@@ -1,6 +1,5 @@
 from . import log
 from flask.helpers import flash, url_for
-from flask_login.utils import login_user
 from flask import Blueprint, render_template, request
 from flask_login import login_user, current_user
 

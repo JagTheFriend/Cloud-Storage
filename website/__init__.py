@@ -14,12 +14,12 @@ log.basicConfig(
     format='%(name)s - %(levelname)s: %(message)s',
     level=log.DEBUG
 )
+DATABASE = f"{getcwd()}/DATABASE"
 
 
 def create_app():
     app = Flask(__name__)
 
-    DATABASE = f"{getcwd()}/DATABASE"
     try:
         # create a folder
         mkdir(DATABASE)

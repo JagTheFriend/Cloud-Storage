@@ -1,4 +1,4 @@
-from os import path
+from os import mkdir, path, getcwd
 import logging as log
 
 from flask import Flask
@@ -18,6 +18,14 @@ log.basicConfig(
 
 def create_app():
     app = Flask(__name__)
+
+    DATABASE = f"{getcwd()}/DATABASE"
+    try:
+        # create a folder
+        mkdir(DATABASE)
+    except FileExistsError:
+        # the file already exists
+        pass
 
     app.config["SECRET_KEY"] = "HelloWorld"
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_NAME}"

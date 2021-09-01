@@ -1,5 +1,6 @@
 # A test
 test.py
+test.http
 
 # The database
 database.db

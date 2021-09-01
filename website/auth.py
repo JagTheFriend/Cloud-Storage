@@ -82,7 +82,7 @@ def sign_up():
 
             log.debug("Created new user")
             login_user(new_user, remember=True)
-            flash("User Created!")
+            flash(f"Welcome {username}!")
             # redirect the user to the home page
             return redirect(url_for("views.home"))
 

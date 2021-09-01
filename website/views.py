@@ -15,7 +15,7 @@ def home():
 
 
 @views.route("/files/username=<username>")
-# @login_required
+@login_required
 def get_files(username: str):
     # check whether the folder already exists
     files = {}

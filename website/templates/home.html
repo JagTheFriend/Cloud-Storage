@@ -1,8 +1,28 @@
 {% extends "base.html" %}
 {% block title %}Welcome home {{ user.username }}{% endblock %}
 {% block content %}
-<h1>Welcome home {{ user.username }}</h1>
+<h1>
+    Welcome home
+    <strong id="username">{{ user.username }}</strong>
+</h1>
+All the files you have uploaded so far:
+<div class="show_files">
+    <ul id="files"></ul>
+</div>
 <script type="text/javascript">
-console.log("hallo");
+    const username = document.getElementById("username").innerHTML;
+    fetch(`${location.origin}/files/username=${username}`)
+        .then((res) => res.json())
+        .then((data) => {
+            for (var key in data) {
+                var value = data[key];
+                const newNode = document.createElement("li");
+                // newNode.innerHTML = `${key}: ${value}`;
+                newNode.innerHTML = `<a href="${value}">${key}</a>`;
+                document.getElementById("files").appendChild(newNode);
+            }
+        })
+        // something went wrong
+        .catch((e) => alert(`Something went wrong.`));
 </script>
 {% endblock %}

@@ -4,6 +4,7 @@ test.http
 
 # The database
 database.db
+DATABASE/
 
 # vscode stuff
 .vscode/

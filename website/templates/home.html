@@ -18,7 +18,7 @@ All the files you have uploaded so far:
                 var value = data[key];
                 const newNode = document.createElement("li");
                 // newNode.innerHTML = `${key}: ${value}`;
-                newNode.innerHTML = `<a href="${value}">${key}</a>`;
+                newNode.innerHTML = `<a href="/get_file/filename=${key}&username=${username}">${key}</a>`;
                 document.getElementById("files").appendChild(newNode);
             }
         })
